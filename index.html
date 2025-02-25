@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Response</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script crossorigin src="https://unpkg.com/@daily-co/daily-js"></script>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #1e3c72, #2a5298);
+        color: white;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    #video-call-container {
+        width: 80%;
+        max-width: 900px;
+        height: 500px;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+</style>
+
+<body>
+    <h2>Video Creation & Webhook Response</h2>
+
+    <button onclick="createVideo()">Create Video</button>
+    <p id="response">Click the button to create a video.</p>
+
+
+
+    <button onclick="checkStatus()">check Status</button>
+    <!-- <h3>Webhook Response:</h3>
+    <div id="webhook-response">Waiting for webhook response...</div> -->
+
+    <h3>Video Details:</h3>
+    <div id="video-details"></div>
+
+
+    <h1>Live Conversation</h1>
+    <p id="massage-conversation"></p>
+    <button onclick="createConversation()">Create conversation</button>
+    <div id="video-call-container"></div>
+
+    <script></script>
+
+    <script>
+        let videoId = null;
+
+        function createVideo() {
+            document.getElementById("response").innerText = "Creating video...";
+
+            fetch("server.php", {
+                    method: "POST"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("response").innerText = JSON.stringify(data, null, 2);
+                    videoId = data.video_id;
+                })
+                .catch(error => {
+                    document.getElementById("response").innerText = "Error: " + error;
+                });
+
+
+
+        }
+
+        function createConversation() {
+
+            document.getElementById("massage-conversation").innerText = "Creating conversation...";
+
+            fetch("create-con.php", {
+                    method: "POST"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const container = document.getElementById('video-call-container');
+
+                    const callFrame = window.DailyIframe.createFrame(container, {
+                        iframeStyle: {
+                            width: '100%',
+                            height: '100%',
+                            border: 'none',
+                        }
+                    });
+
+                    callFrame.join({
+                        url: data.conversation_url
+                    });
+                    document.getElementById("massage-conversation").innerText = JSON.stringify(data, null, 2);
+                    videoId = data.video_id;
+                })
+                .catch(error => {
+                    document.getElementById("massage-conversation").innerText = "Error: " + error;
+                });
+
+        }
+
+
+        function checkStatus() {
+            if (videoId === null) {
+                document.getElementById("video-details").innerText = "No video created yet.";
+                return;
+            }
+            fetch("webhook.json")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.video_id === videoId) {
+                        console.log("Video Details: ", data);
+                        document.getElementById("video-details").innerText =
+                            `Status: ${data.status}\n` +
+                            `Video Name: ${data.video_name}\n` +
+                            `Hosted URL: ${data.hosted_url}`;
+                    } else {
+                        document.getElementById("video-details").innerText = "video is in the queue please wait";
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("video-details").innerText = "Error fetching video details: " + error;
+                });
+        }
+    </script>
+</body>
+
+</html>

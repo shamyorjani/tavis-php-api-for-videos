@@ -1,37 +1,39 @@
+
 <?php
 
-$callback_url = " https://e676-182-184-175-83.ngrok-free.app/webhook.php";
-
+$callback_url = " https://76c6-182-184-175-83.ngrok-free.app/webhook.php";
 $data = [
     "replica_id" => "r084238898",
-    "script" => "create a video on topic of AI explaining the concepts of machine learning and deep learning in detail with examples",
+    "script" => "create a video on topic of AI explaining",
     "video_name" => "AI video",
     "callback_url" => $callback_url
 ];
 
-$headers = [
+$curl = curl_init();
+
+
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://tavusapi.com/v2/videos",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 30,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => json_encode($data),
+  CURLOPT_HTTPHEADER => [
     "Content-Type: application/json",
-    "x-api-key: ac84a67627354c2e849730f97181fd03"
-];
-
-$ch = curl_init();
-
-curl_setopt_array($ch, [
-    CURLOPT_URL => "https://tavusapi.com/v2/videos",
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($data),
-    CURLOPT_HTTPHEADER => $headers,
+    "x-api-key: 6a99b71394474386b407d8fe2a1cfccf"
+  ],
 ]);
 
-$response = curl_exec($ch);
-$error = curl_error($ch);
+$response = curl_exec($curl);
+$err = curl_error($curl);
 
-curl_close($ch);
+curl_close($curl);
 
-if ($error) {
-    echo "cURL Error: " . $error;
+if ($err) {
+  echo "cURL Error #:" . $err;
 } else {
-    echo "Response: " . $response;
+  echo $response;
 }
-?>
