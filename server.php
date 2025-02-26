@@ -1,7 +1,7 @@
 
 <?php
 
-$callback_url = " https://76c6-182-184-175-83.ngrok-free.app/webhook.php";
+$callback_url = "https://76c6-182-184-175-83.ngrok-free.app/webhook.php";
 $data = [
     "replica_id" => "r084238898",
     "script" => "create a video on topic of AI explaining",
@@ -10,7 +10,6 @@ $data = [
 ];
 
 $curl = curl_init();
-
 
 curl_setopt_array($curl, [
   CURLOPT_URL => "https://tavusapi.com/v2/videos",

@@ -3,7 +3,7 @@
 $data = [
     "replica_id" => "r79e1c033f",
     "persona_id" => "p2fbd605",
-    "callback_url" => "https://yourwebsite.com/webhook",
+    "callback_url" => "https://e8f9-182-184-138-168.ngrok-free.app/webhook-con.php",
     "conversation_name" => "A Meeting with Hassaan",
     "conversational_context" => "You are about to talk to Hassaan, one of the cofounders of Tavus. He loves to talk about AI, startups, and racing cars.",
     "custom_greeting" => "Hey there Hassaan, long time no see!",
@@ -32,7 +32,7 @@ curl_setopt_array($curl, [
     CURLOPT_POSTFIELDS => json_encode($data),
     CURLOPT_HTTPHEADER => [
         "Content-Type: application/json",
-        "x-api-key: 6a99b71394474386b407d8fe2a1cfccf"
+        "x-api-key: 247429342d8a4927b757b41f374878a5"
     ],
 ]);
 
