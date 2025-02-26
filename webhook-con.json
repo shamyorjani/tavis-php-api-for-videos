@@ -1,1 +1,1 @@
-{"properties":{"replica_id":"r79e1c033f"},"conversation_id":"c395d43413d2","webhook_url":"https:\/\/e8f9-182-184-138-168.ngrok-free.app\/webhook-con.php","event_type":"system.replica_joined","message_type":"system","timestamp":"2025-02-26T07:24:38.848465Z"}
+{"properties":{"replica_id":"r79e1c033f","shutdown_reason":"max_call_duration"},"conversation_id":"c77b0b645745","webhook_url":"https:\/\/e8f9-182-184-138-168.ngrok-free.app\/webhook-con.php","message_type":"system","event_type":"system.shutdown","timestamp":"2025-02-26T09:28:51.956484Z"}
