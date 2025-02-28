@@ -1,0 +1,38 @@
+# Ignore the .env file containing sensitive information
+.env
+
+# Ignore vendor directory (Composer dependencies)
+/vendor/
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+
+# Ignore system files
+Thumbs.db
+.DS_Store
+
+# Ignore compiled files
+*.class
+*.o
+*.so
+
+# Ignore node_modules directory (if using Node.js)
+/node_modules/
+
+# Ignore coverage reports
+/coverage/
+
+# Ignore build artifacts
+/build/
+/dist/
+
+# Ignore PHPStorm specific files
+.phpstorm.meta.php

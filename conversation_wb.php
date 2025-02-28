@@ -4,7 +4,7 @@ $data = file_get_contents("php://input");
 $decoded_data = json_decode($data, true);
 
 if ($decoded_data) {
-    file_put_contents("webhook-con.json", json_encode($decoded_data));
+    file_put_contents("conversation_wb.json", json_encode($decoded_data));
     // Respond to the sender (Postman, Tavus API, etc.)
     header("Content-Type: application/json");
     echo json_encode(["message" => "Webhook received"]);
