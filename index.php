@@ -1,20 +1,6 @@
 <?php
-// Enable error reporting
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
-// Database connection
-// $host = "localhost"; // Change if different
-// $username = "root"; // Change if needed
-// $password = ""; // Change if needed
-// $database = "tavus_project";
-
-// $conn = new mysqli($host, $username, $password, $database);
-
-// Check connection
-// if ($conn->connect_error) {
-//     die("Connection failed: " . $conn->connect_error);
-// }
 
 // Handle file upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES["file"])) {
@@ -39,13 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES["file"])) {
     } else {
         // Move the uploaded file
         if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
-            // Insert into database
-            // $stmt = $conn->prepare("INSERT INTO user_info (name, email, file) VALUES (?, ?, ?)");
-            // $stmt->bind_param("sss", $name, $email, $file_name);
-
-            // if ($stmt->execute()) {
-            //     $message = "File uploaded successfully!";
-            //     $messageType = "success";
                 header("Location: conversation.php?name=" . urlencode($name) . "&email=" . urlencode($email) . "&file=" . urlencode($file_name));
                 exit();
             // } else {

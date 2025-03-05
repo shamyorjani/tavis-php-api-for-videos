@@ -1,19 +1,19 @@
 <?php
-// filepath: /d:/tavus-api-php/cloude-api.php
-
-// Include the Composer autoload file
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Dotenv\Dotenv;
 
+header('Content-Type: application/json'); // Ensure response is JSON
+
 // Load the .env file
-$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 $api_key = $_ENV['ANTHROPIC_API_KEY'];
 
 if (!$api_key) {
-    die("Error: API Key not found. Make sure the .env file is loaded correctly.");
+    echo json_encode(['success' => false, 'error' => 'API Key not found. Make sure the .env file is loaded correctly.']);
+    exit;
 }
 
 $api_endpoint = 'https://api.anthropic.com/v1/messages';
@@ -23,17 +23,18 @@ $data = json_decode(file_get_contents('php://input'), true);
 $file_name = $data['fileName'] ?? '';
 
 if (!$file_name) {
-    die("Error: File name not provided.");
+    echo json_encode(['success' => false, 'error' => 'File name not provided.']);
+    exit;
 }
 
 // Fetch the PDF file and encode it in base64
-$pdf_url = './pdf/' . $file_name;
+$pdf_url = __DIR__ . '/../pdf/' . basename($file_name);
 $pdf_content = file_get_contents($pdf_url);
 $pdf_base64 = base64_encode($pdf_content);
 
 if ($pdf_base64 === false) {
-    echo 'Failed to read the PDF file';
-    exit();
+    echo json_encode(['success' => false, 'error' => 'Failed to read the PDF file.']);
+    exit;
 }
 
 $request_data = [

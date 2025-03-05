@@ -3,8 +3,10 @@ $name = $_GET['name'] ?? 'N/A';
 $email = $_GET['email'] ?? 'N/A';
 $file = $_GET['file'] ?? '';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -94,127 +96,146 @@ $file = $_GET['file'] ?? '';
     </div>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const fileName = <?php echo json_encode($file); ?>; // Get the file from PHP
-        const name = <?php echo json_encode($name); ?>; // Get the name from PHP
-        const email = <?php echo json_encode($email); ?>; // Get the email from PHP
+        document.addEventListener("DOMContentLoaded", function() {
+            const fileName = <?php echo json_encode($file); ?>; // Get the file from PHP
+            const name = <?php echo json_encode($name); ?>; // Get the name from PHP
+            const email = <?php echo json_encode($email); ?>; // Get the email from PHP
 
-        // Process the file if it exists
-        if (fileName) {
-            fetchTestResults(fileName, name, email);
-        } else {
-            document.getElementById("results-container").innerHTML =
-                "<p class='text-center text-red-600 py-8'>No file provided.</p>";
-        }
-    });
+            // Process the file if it exists
+            if (fileName) {
+                console.log("File:", fileName);
+                fetchTestResults(fileName, name, email);
+            } else {
+                document.getElementById("results-container").innerHTML =
+                    "<p class='text-center text-red-600 py-8'>No file provided.</p>";
+            }
+        });
 
-    // Function to create a conversation
-    function createConversation(name, email, textContent) {
-        document.getElementById("massage-conversation").innerText = "Creating conversation...";
-        document.getElementById("massage-conversation").className = "text-center text-amber-600 mb-4 animate-pulse";
+        // Function to create a conversation
+        function createConversation(name, email, textContent) {
+            document.getElementById("massage-conversation").innerText = "Creating conversation...";
+            document.getElementById("massage-conversation").className = "text-center text-amber-600 mb-4 animate-pulse";
 
-        fetch("create_conversation.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: name,
-                    email: email,
-                    textContent: textContent
+            fetch("lib/tavus.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        textContent: textContent
+                    })
                 })
-            })
-            .then(response => response.text()) // Get response as text first
-            .then(text => {
-                console.log("Raw response:", text);
-                try {
-                    return JSON.parse(text); // Try parsing as JSON
-                } catch (error) {
-                    throw new Error("Invalid JSON response: " + text);
-                }
-            })
-            .then(data => {
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                console.log(data);
-                const container = document.getElementById('video-call-container');
-                container.innerHTML = ''; // Clear previous content
-
-                const callFrame = window.DailyIframe.createFrame(container, {
-                    iframeStyle: {
-                        width: '100%',
-                        height: '100%',
-                        border: 'none',
-                    }
-                });
-
-                callFrame.join({
-                    url: data.conversation_url
-                });
-
-                document.getElementById("massage-conversation").innerText = "Conversation started successfully";
-                document.getElementById("massage-conversation").className = "text-center text-green-600 mb-4";
-            })
-            .catch(error => {
-                document.getElementById("massage-conversation").innerText = "Error: " + error.message;
-                document.getElementById("massage-conversation").className = "text-center text-red-600 mb-4";
-            });
-    }
-
-    // Function to fetch test results
-    function fetchTestResults(fileName, name, email) {
-        const resultsContainer = document.getElementById("results-container");
-        resultsContainer.innerHTML =
-            "<p class='text-center py-8'><span class='inline-block animate-spin mr-2'>⟳</span> Processing...</p>";
-
-        fetch("cloude-api.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    fileName: fileName
-                })
-            })
-            .then(response => response.text())
-            .then(text => {
-                try {
+                .then(response => response.text()) // Get response as text first
+                .then(text => {
                     console.log("Raw response:", text);
+                    try {
+                        return JSON.parse(text); // Try parsing as JSON
+                    } catch (error) {
+                        throw new Error("Invalid JSON response: " + text);
+                    }
+                })
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
 
-                    // Remove "API response: " prefix if present
-                    const jsonText = text.replace(/^API response: /, '');
-                    const data = JSON.parse(jsonText);
+                    console.log(data);
+                    const container = document.getElementById('video-call-container');
+                    container.innerHTML = ''; // Clear previous content
 
-                    if (data.content && Array.isArray(data.content)) {
-                        const textContent = data.content.find(item => item.type === "text");
+                    const callFrame = window.DailyIframe.createFrame(container, {
+                        iframeStyle: {
+                            width: '100%',
+                            height: '100%',
+                            border: 'none',
+                        }
+                    });
 
-                        if (textContent && textContent.text) {
-                            console.log("Extracted text:", textContent.text); // Only log the extracted text
-                            resultsContainer.innerHTML = textContent.text;
-                            // createConversation(name, email, textContent.text); // Pass textContent to createConversation
+                    callFrame.join({
+                        url: data.conversation_url
+                    });
+
+                    document.getElementById("massage-conversation").innerText = "Conversation started successfully";
+                    document.getElementById("massage-conversation").className = "text-center text-green-600 mb-4";
+                })
+                .catch(error => {
+                    document.getElementById("massage-conversation").innerText = "Error: " + error.message;
+                    document.getElementById("massage-conversation").className = "text-center text-red-600 mb-4";
+                });
+        }
+
+        // Function to fetch test results
+        function fetchTestResults(fileName, name, email) {
+            const resultsContainer = document.getElementById("results-container");
+            resultsContainer.innerHTML =
+                "<p class='text-center py-8'><span class='inline-block animate-spin mr-2'>⟳</span> Processing...</p>";
+
+
+            fetch(`lib/process_pdf.php?file=${encodeURIComponent(fileName)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Extracted Text:", data);
+                        createConversation(name, email, data.text);
+                    } else {
+                        console.error("Error:", data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error("Fetch Error:", error);
+                    resultsContainer.innerHTML = `<p class="text-red-500">Failed to process the PDF.</p>`;
+                });
+            fetch("lib/claude.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        fileName: fileName
+                    })
+                })
+
+
+                .then(response => response.text())
+                .then(text => {
+                    try {
+                        console.log("Raw response:", text);
+
+                        // Remove "API response: " prefix if present
+                        const jsonText = text.replace(/^API response: /, '');
+                        const data = JSON.parse(jsonText);
+
+                        if (data.content && Array.isArray(data.content)) {
+                            const textContent = data.content.find(item => item.type === "text");
+
+                            if (textContent && textContent.text) {
+                                console.log("Extracted text:", textContent.text); // Only log the extracted text
+                                resultsContainer.innerHTML = textContent.text;
+
+                            } else {
+                                resultsContainer.innerHTML =
+                                    "<p class='text-center text-red-600 py-8'>No valid content received.</p>";
+                            }
                         } else {
                             resultsContainer.innerHTML =
-                                "<p class='text-center text-red-600 py-8'>No valid content received.</p>";
+                                "<p class='text-center text-red-600 py-8'>Invalid response format.</p>";
                         }
-                    } else {
+                    } catch (error) {
+                        console.error("Error parsing response:", error);
                         resultsContainer.innerHTML =
-                            "<p class='text-center text-red-600 py-8'>Invalid response format.</p>";
+                            "<p class='text-center text-red-600 py-8'>An error occurred while processing the API response.</p>";
                     }
-                } catch (error) {
-                    console.error("Error parsing response:", error);
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
                     resultsContainer.innerHTML =
-                        "<p class='text-center text-red-600 py-8'>An error occurred while processing the API response.</p>";
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching data:", error);
-                resultsContainer.innerHTML =
-                    "<p class='text-center text-red-600 py-8'>An error occurred while connecting to the server.</p>";
-            });
-    }
-</script>
+                        "<p class='text-center text-red-600 py-8'>An error occurred while connecting to the server.</p>";
+                });
+
+        }
+    </script>
 </body>
 
 </html>

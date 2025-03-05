@@ -110,7 +110,7 @@
             document.getElementById("response").innerText = "Creating video...";
             document.getElementById("response").className = "mt-4 text-sm text-center text-yellow-200 animate-pulse";
 
-            fetch("server.php", {
+            fetch("/lib/video.php", {
                 method: "POST"
             })
             .then(response => response.json())
@@ -170,7 +170,7 @@
             document.getElementById("video-details").innerText = "Checking status...";
             document.getElementById("video-details").className = "mt-4 text-sm text-blue-200 break-words bg-blue-900/30 p-3 rounded-lg h-20 overflow-auto animate-pulse";
             
-            fetch("webhook.json")
+            fetch("webhooks/video.json")
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("video-details").className = "mt-4 text-sm text-blue-200 break-words bg-blue-900/30 p-3 rounded-lg h-20 overflow-auto";
