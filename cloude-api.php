@@ -37,7 +37,7 @@ if ($pdf_base64 === false) {
 }
 
 $request_data = [
-    'model' => 'claude-3-7-sonnet-20250219',
+    'model' => 'claude-3-7-sonnet-latest',
     'max_tokens' => 8192,
     'messages' => [
         [
@@ -136,7 +136,11 @@ Please follow these specific rules for visualization:
             <span class='absolute' style='left: calc((20 / 150) * 100%)'>20</span>
             <span class='absolute' style='left: calc((30 / 150) * 100%)'>30</span>
             <span class='absolute' style='left: calc((100 / 150) * 100%)'>100</span>
-            <span class='absolute' style='left: calc((150 / 150) * 97%)'>150</span> do not add double last value" ,
+            <span class='absolute' style='left: calc((150 / 150) * 97%)'>150</span> do not add double last value.
+            21. If the result is EX: <div class='absolute transform -translate-x-1/2' style='left: calc((57 / 80) * 100%)'>, do not show the result value on the top result bar <span class='absolute' style='left: calc((57 / 80) * 97%)'>57</span>.
+            22. If all test results are within the reference range and there are no out-of-range values, do not create any graphs. Instead, append a message like 'All test results are within the reference range No further action is required.' to the HTML using Tailwind CSS for styling. do say that i am using tailwind css html etc.
+            23. Since this lab report includes more than five tests and contains multiple out-of-range values, I will ensure that all abnormal results are displayed without exception.
+            24. make a graph of every out off range and or red value in the report. MOST IMPORTANI",
                 ]
             ],
         ],

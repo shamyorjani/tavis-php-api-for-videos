@@ -2,12 +2,9 @@
 $name = $_GET['name'] ?? 'N/A';
 $email = $_GET['email'] ?? 'N/A';
 $file = $_GET['file'] ?? '';
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
