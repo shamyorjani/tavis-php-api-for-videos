@@ -32,12 +32,37 @@ $file = $_GET['file'] ?? '';
             }
         }
     </script>
-
-
-
 </head>
 
 <body class="font-['Inter'] bg-gray-50 text-gray-800 min-h-screen p-6">
+    <div class="container mx-auto px-4 py-8 flex flex-col items-center">
+        <h1 class="text-3xl font-bold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-gray-700 to-gray-500">
+            Video Communication
+        </h1>
+        <!-- Live Conversation Section -->
+        <div class="w-full max-w-4xl">
+            <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-lg p-6 mb-6">
+                <h2 class="text-2xl font-semibold mb-4 flex items-center justify-center text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                    </svg>
+                    Live Conversation
+                </h2>
+                <div class="flex flex-col items-center">
+                    <p id="massage-conversation" class="text-center text-gray-600 mb-4">Start a new video conversation session.</p>
+                </div>
+            </div>
+            <div id="video-call-container" class="w-full aspect-video bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl overflow-hidden shadow-lg border border-gray-200 flex items-center justify-center">
+                <div class="text-center p-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <p class="text-gray-600 text-lg">Your video call will appear here</p>
+                    <p class="text-gray-500 text-sm mt-2">Click "Start Conversation" to begin</p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="max-w-4xl mx-auto bg-white shadow rounded-lg p-6">
         <div class="flex justify-between items-center mb-8 border-b pb-4">
             <h1 class="text-2xl font-bold text-gray-900">Hormone Panel Results</h1>
@@ -59,41 +84,6 @@ $file = $_GET['file'] ?? '';
             <p class="text-center text-gray-500 py-12">Loading results...</p>
         </div>
     </div>
-    <div class="container mx-auto px-4 py-8 flex flex-col items-center">
-        <h1
-            class="text-3xl font-bold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-gray-700 to-gray-500">
-            Video Communication
-        </h1>
-        <!-- Live Conversation Section -->
-        <div class="w-full max-w-4xl">
-            <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-lg p-6 mb-6">
-                <h2 class="text-2xl font-semibold mb-4 flex items-center justify-center text-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-600" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                    </svg>
-                    Live Conversation
-                </h2>
-                <div class="flex flex-col items-center">
-                    <p id="massage-conversation" class="text-center text-gray-600 mb-4">Start a new video conversation
-                        session.</p>
-                </div>
-            </div>
-            <div id="video-call-container"
-                class="w-full aspect-video bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl overflow-hidden shadow-lg border border-gray-200 flex items-center justify-center">
-                <div class="text-center p-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4 opacity-70"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                    <p class="text-gray-600 text-lg">Your video call will appear here</p>
-                    <p class="text-gray-500 text-sm mt-2">Click "Start Conversation" to begin</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -104,7 +94,9 @@ $file = $_GET['file'] ?? '';
             // Process the file if it exists
             if (fileName) {
                 console.log("File:", fileName);
-                fetchTestResults(fileName, name, email);
+                startConversation(fileName, name, email).then(() => {
+                    fetchTestResults(fileName, name, email);
+                });
             } else {
                 document.getElementById("results-container").innerHTML =
                     "<p class='text-center text-red-600 py-8'>No file provided.</p>";
@@ -166,14 +158,8 @@ $file = $_GET['file'] ?? '';
                 });
         }
 
-        // Function to fetch test results
-        function fetchTestResults(fileName, name, email) {
-            const resultsContainer = document.getElementById("results-container");
-            resultsContainer.innerHTML =
-                "<p class='text-center py-8'><span class='inline-block animate-spin mr-2'>⟳</span> Processing...</p>";
-
-
-            fetch(`lib/process_pdf.php?file=${encodeURIComponent(fileName)}`)
+        function startConversation(fileName, name, email) {
+            return fetch(`lib/process_pdf.php?file=${encodeURIComponent(fileName)}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -185,8 +171,16 @@ $file = $_GET['file'] ?? '';
                 })
                 .catch(error => {
                     console.error("Fetch Error:", error);
-                    resultsContainer.innerHTML = `<p class="text-red-500">Failed to process the PDF.</p>`;
+                    document.getElementById("results-container").innerHTML = `<p class="text-red-500">Failed to process the PDF.</p>`;
                 });
+        }
+
+        // Function to fetch test results
+        function fetchTestResults(fileName, name, email) {
+            const resultsContainer = document.getElementById("results-container");
+            resultsContainer.innerHTML =
+                "<p class='text-center py-8'><span class='inline-block animate-spin mr-2'>⟳</span> Processing...</p>";
+
             fetch("lib/claude.php", {
                     method: "POST",
                     headers: {
@@ -196,8 +190,6 @@ $file = $_GET['file'] ?? '';
                         fileName: fileName
                     })
                 })
-
-
                 .then(response => response.text())
                 .then(text => {
                     try {
@@ -233,7 +225,6 @@ $file = $_GET['file'] ?? '';
                     resultsContainer.innerHTML =
                         "<p class='text-center text-red-600 py-8'>An error occurred while connecting to the server.</p>";
                 });
-
         }
     </script>
 </body>
