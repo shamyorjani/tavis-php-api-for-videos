@@ -7,7 +7,7 @@ $name = $data['name'] ?? 'N/A';
 $email = $data['email'] ?? 'N/A';
 $textContent = $data['textContent'] ?? '';
 
-$apiKeys = ['c879c61142f34ac9ad9a7dd0df0914e1', '8eba9af217f045c487402d055472d1fd', 'ecf298b9b49d44b6af3105fefb5b3e60', '631e81891e0640c9a101d34e660aac1c', 'f2fd7d6b98334876a9aeb9c356dcdb6f', 'b76e537aec514f7db2e2689ecf13b713', '0679e55011b142f791dcf3738364f740', '6f7c9c5fc4eb4e2cb9cee6cbe48bc566', '1cf96102060e404fabc995cd4202222d', '1be12c1378c646f8ac83ea7175f09024', '02faa3a215c0440d89db88fc0319dec5', '293b8245a8b3468898915994315be7d2', '30f335aa14214445bbde4852f9bdc182', '418cda69d65447a1bf45fed5b616b83e', '585b7eb588ac499ca4b581ddc7d00bee', '585b7eb588ac499ca4b581ddc7d00bee', '6322896e9b7f4142810cfe3d771dd1d5', 'e425b92eac614fcd98202313dcbfaded', 'b66d98e4f7f84439aa87bccbde9e6ff7', '15e359a8b6dd40ae8df78b1accf649a8', 'ca46457475b3437f84b98bb1cb444535', '50619c2e2c1a4bf985ab0b6be5e34cb4'];
+$apiKeys = ['1cf96102060e404fabc995cd4202222d', '1be12c1378c646f8ac83ea7175f09024', '02faa3a215c0440d89db88fc0319dec5', '293b8245a8b3468898915994315be7d2', '30f335aa14214445bbde4852f9bdc182', '418cda69d65447a1bf45fed5b616b83e', '585b7eb588ac499ca4b581ddc7d00bee', '585b7eb588ac499ca4b581ddc7d00bee', '6322896e9b7f4142810cfe3d771dd1d5', 'e425b92eac614fcd98202313dcbfaded', 'b66d98e4f7f84439aa87bccbde9e6ff7', '15e359a8b6dd40ae8df78b1accf649a8', 'ca46457475b3437f84b98bb1cb444535', '50619c2e2c1a4bf985ab0b6be5e34cb4'];
 
 $data = [
     'replica_id' => 'r0b262e2065e',
@@ -15,7 +15,7 @@ $data = [
     'callback_url' => 'https://e8f9-182-184-138-168.ngrok-free.app/lib/tavus_wh.php',
     'conversation_name' => 'A Meeting with ' . $name,
     'conversational_context' => 'You are about to talk to ' . $name . '. ' . $textContent . ' Please be respectful and professional do not tak about html and tailwind code just talk about report details.',
-    'custom_greeting' => 'Hey there ' . $name . ', long time no see!',
+    'custom_greeting' => 'Hi ' . $name . ', my name is Sanjay and I am your health concierge. I am not a doctor and I am not here to diagnose you, rather I will give you information about your lab results and provide you an opportunity to ask questions so that you can be more informed about your health. After our conversation, you can also schedule a call with a doctor via the link below. so lets get started..... and then go right into the out of range values. After reviewing the values, ask, "so, what questions do you have',
     'properties' => [
         'max_call_duration' => 3600,
         'participant_left_timeout' => 60,
@@ -66,6 +66,20 @@ foreach ($apiKeys as $index => $apiKey) {
             $apiKeys = array_values($apiKeys);
             continue;
         } else {
+            // save api key into session
+            if (!isset($_SESSION)) {
+                session_start();
+                $_SESSION['api_key'] = $apiKey;
+            } else if (isset($_SESSION)) {
+                if ($_SESSION['api_key'] != $apiKey) {
+                    // clear session
+                    session_unset();
+                    session_destroy();
+                    session_start();
+                    $_SESSION['api_key'] = $apiKey;
+                }
+            }
+
             echo json_encode($responseData);
             exit();
         }
