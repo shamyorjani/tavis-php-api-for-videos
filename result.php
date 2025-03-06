@@ -1,10 +1,23 @@
 <?php
-$name = $_GET['name'] ?? 'N/A';
-$email = $_GET['email'] ?? 'N/A';
-$file = $_GET['file'] ?? '';
-$conversation_url = $_GET['conversation_url'] ?? '';
-$textContent = $_GET['textContent'] ?? '';
+session_start();
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST["name"] ?? "";
+    $email = $_POST["email"] ?? "";
+    $file = $_POST["file"] ?? "";
+    $conversation_url = $_POST["conversation_url"] ?? "";
+    $textContent = $_POST["textContent"] ?? "";
+
+    // Store data in session or database if needed
+    $_SESSION['name'] = $name;
+    $_SESSION['email'] = $email;
+    $_SESSION['file'] = $file;
+    $_SESSION['conversation_url'] = $conversation_url;
+    $_SESSION['textContent'] = $textContent;
+
+    echo json_encode(["status" => "success"]);
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -69,11 +82,11 @@ $textContent = $_GET['textContent'] ?? '';
         </div>
 
         <div class="mb-6">
-            <p><strong>Name:</strong> <?php echo htmlspecialchars($name); ?></p>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
+            <p><strong>Name:</strong> <?php echo htmlspecialchars($_SESSION['name'] ?? ''); ?></p>
+            <p><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?></p>
             <p><strong>File:</strong>
-                <?php if ($file): ?>
-                <a href="pdf/<?php echo htmlspecialchars($file); ?>" target="_blank" class="text-blue-500">View File</a>
+                <?php if (!empty($_SESSION['file'])): ?>
+                <a href="pdf/<?php echo htmlspecialchars($_SESSION['file']); ?>" target="_blank" class="text-blue-500">View File</a>
                 <?php else: ?>
                 <span class="text-red-500">No file available</span>
                 <?php endif; ?>
@@ -88,74 +101,76 @@ $textContent = $_GET['textContent'] ?? '';
     <script>
         function endConversation(conversationId) {
             fetch("lib/end_conversation.php", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: "conversation_id=" + encodeURIComponent(conversationId)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert("Error: " + data.error);
-                    } else {
-                        alert("Conversation ended successfully!");
-                        window.location.href = "index.php"; // Redirect after ending conversation
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("Failed to end conversation.");
-                });
+                method: "POST",
+                headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "conversation_id=" + encodeURIComponent(conversationId)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.error) {
+                alert("Error: " + data.error);
+                } else {
+                alert("Conversation ended successfully!");
+                window.location.href = "index.php"; // Redirect after ending conversation
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to end conversation.");
+            });
         }
 
         document.getElementById("endConversationBtn").addEventListener("click", function() {
-            const conversationUrlEnd = <?php echo json_encode($conversation_url); ?>;
+            const conversationUrlEnd = <?php echo json_encode($_SESSION['conversation_url'] ?? ''); ?>;
             let conversationId = conversationUrlEnd.split("/").pop();
             endConversation(conversationId);
         });
 
         document.addEventListener("DOMContentLoaded", function() {
-            const fileName = <?php echo json_encode($file); ?>; // Get the file from PHP
-            const name = <?php echo json_encode($name); ?>; // Get the name from PHP
-            const email = <?php echo json_encode($email); ?>; // Get the email from PHP
-            const conversationUrl = <?php echo json_encode($conversation_url); ?>; // Get the conversation URL from PHP
-            const textContent = <?php echo json_encode($textContent); ?>;
+            const fileName = <?php echo json_encode($_SESSION['file'] ?? ''); ?>; // Get the file from PHP
+            const name = <?php echo json_encode($_SESSION['name'] ?? ''); ?>; // Get the name from PHP
+            const email = <?php echo json_encode($_SESSION['email'] ?? ''); ?>; // Get the email from PHP
+            const conversationUrl = <?php echo json_encode($_SESSION['conversation_url'] ?? ''); ?>; // Get the conversation URL from PHP
+            const textContent = <?php echo json_encode($_SESSION['textContent'] ?? ''); ?>;
             console.log(conversationUrl);
 
             let conversationId = conversationUrl.split("/").pop();
             console.log(conversationId);
             // Start the conversation
             if (conversationUrl) {
-                const container = document.getElementById('video-call-container');
-                const callFrame = window.DailyIframe.createFrame(container, {
-                    iframeStyle: {
-                        width: '100%',
-                        height: '100%',
-                        border: 'none',
-                    }
-                });
+            const container = document.getElementById('video-call-container');
+            const callFrame = window.DailyIframe.createFrame(container, {
+                iframeStyle: {
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                }
+            });
 
-                callFrame.join({
-                    url: conversationUrl
-                });
+            callFrame.join({
+                url: conversationUrl
+            });
 
-                document.getElementById("massage-conversation").innerText = "Conversation started successfully";
-                document.getElementById("massage-conversation").className = "text-center text-green-600 mb-4";
+            document.getElementById("massage-conversation").innerText = "Conversation started successfully";
+            document.getElementById("massage-conversation").className = "text-center text-green-600 mb-4";
             } else {
-                document.getElementById("massage-conversation").innerText = "Error: Conversation URL not provided.";
-                document.getElementById("massage-conversation").className = "text-center text-red-600 mb-4";
+            document.getElementById("massage-conversation").innerText = "Error: Conversation URL not provided.";
+            document.getElementById("massage-conversation").className = "text-center text-red-600 mb-4";
             }
 
             // Display the fetched text content
             const resultsContainer = document.getElementById("results-container");
             if (textContent) {
-                resultsContainer.innerHTML = textContent;
+            resultsContainer.innerHTML = textContent;
             } else {
-                resultsContainer.innerHTML =
-                    "<p class='text-center text-red-600 py-8'>No valid content received.</p>";
+            resultsContainer.innerHTML =
+                "<p class='text-center text-red-600 py-8'>No valid content received.</p>";
             }
         });
+
     </script>
 </body>
 

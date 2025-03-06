@@ -81,6 +81,27 @@ ini_set('display_errors', 1);
     </div>
 
     <script>
+        function sendDataToResult(name, email, file, conversationUrl, textContent) {
+            $.ajax({
+                url: "result.php",
+                type: "POST",
+                data: {
+                    name: name,
+                    email: email,
+                    file: file,
+                    conversation_url: conversationUrl,
+                    textContent: textContent
+                },
+                success: function(response) {
+                    console.log("Response from result.php:", response);
+                    window.location.href = "result.php"; // Redirect without query params
+                },
+                error: function(error) {
+                    console.error("Error sending data to result.php:", error);
+                }
+            });
+        }
+
         $(document).ready(function() {
             $("#uploadForm").on("submit", function(e) {
                 e.preventDefault();
@@ -94,7 +115,7 @@ ini_set('display_errors', 1);
                 submitButton.html('<i class="fas fa-spinner fa-spin"></i> Uploading...');
 
                 $.ajax({
-                    url: "upload.php",
+                    url: "lib/upload.php",
                     type: "POST",
                     data: formData,
                     contentType: false,
@@ -102,6 +123,7 @@ ini_set('display_errors', 1);
                     success: function(response) {
                         let messageDiv = $("#message-container");
                         messageDiv.html("").removeClass("hidden");
+                        console.log("Response: 1", response);
 
                         if (response.status === "success") {
                             messageDiv.html(
@@ -109,86 +131,182 @@ ini_set('display_errors', 1);
                                 response.message + '</div>'
                             );
 
-                            fetch("lib/tavus.php", {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json"
-                                    },
-                                    body: JSON.stringify({
-                                        name: response.name,
-                                        email: response.email,
-                                        textContent: response.textContent
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    conversationalUrlNew = data.conversation_url;
-                                    if (data.status === "active") {
-                                       
-                                        fetch("lib/claude.php", {
+                            // Process the PDF to get text content
+                            $.ajax({
+                                url: "lib/process_pdf.php",
+                                type: "GET",
+                                data: {
+                                    file: response.file
+                                },
+                                success: function(pdfResponse) {
+                                    if (pdfResponse.success) {
+                                        response.textContent = pdfResponse.text;
+                                        console.log("Response: 1", response
+                                            .textContent);
+
+                                        fetch("lib/tavus.php", {
                                                 method: "POST",
                                                 headers: {
                                                     "Content-Type": "application/json"
                                                 },
                                                 body: JSON.stringify({
-                                                    fileName: response.file
+                                                    name: response.name,
+                                                    email: response
+                                                        .email,
+                                                    textContent: response
+                                                        .textContent
                                                 })
                                             })
-                                            .then(response => response.text())
-                                            .then(text => {
-                                                try {
-                                                    console.log("Raw response:", text);
-                                                    const jsonText = text.replace(/^API response: /, '');
-                                                    const data = JSON.parse(jsonText);
-                                                      
-                                                    if (data.content && Array.isArray(data.content)) {
-                                                        const textContent = data.content.find(item => item.type === "text");
-                                                        console.log("Response: 3", data.conversation_url);
-                                                        if (textContent && textContent.text) {
-                                                            console.log("Extracted text:", textContent.text); // Only log the extracted text                                                            
-                                                            console.log("Response:4", conversationalUrlNew);
-                                                            window.location.href =
-                                                                "result.php?name=" + encodeURIComponent(response.name) +
-                                                                "&email=" + encodeURIComponent(response.email) +
-                                                                "&file=" + encodeURIComponent(response.file) +
-                                                                "&conversation_url=" + encodeURIComponent(conversationalUrlNew) +
-                                                                "&textContent=" + encodeURIComponent(textContent.text);
-                                                        } else {
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                conversationalUrlNew = data
+                                                    .conversation_url;
+                                                if (data.status === "active") {
+
+                                                    fetch("lib/claude.php", {
+                                                            method: "POST",
+                                                            headers: {
+                                                                "Content-Type": "application/json"
+                                                            },
+                                                            body: JSON
+                                                                .stringify({
+                                                                    fileName: response
+                                                                        .file
+                                                                })
+                                                        })
+                                                        .then(response =>
+                                                            response.text())
+                                                        .then(text => {
+                                                            try {
+                                                                console.log(
+                                                                    "Raw response:",
+                                                                    text
+                                                                    );
+                                                                const
+                                                                    jsonText =
+                                                                    text
+                                                                    .replace(
+                                                                        /^API response: /,
+                                                                        '');
+                                                                const data =
+                                                                    JSON
+                                                                    .parse(
+                                                                        jsonText
+                                                                        );
+
+                                                                if (data
+                                                                    .content &&
+                                                                    Array
+                                                                    .isArray(
+                                                                        data
+                                                                        .content
+                                                                        )) {
+                                                                    const
+                                                                        textContent =
+                                                                        data
+                                                                        .content
+                                                                        .find(
+                                                                            item =>
+                                                                            item
+                                                                            .type ===
+                                                                            "text"
+                                                                            );
+                                                                    console
+                                                                        .log(
+                                                                            "Response: 3",
+                                                                            data
+                                                                            .conversation_url
+                                                                            );
+                                                                    if (textContent &&
+                                                                        textContent
+                                                                        .text
+                                                                        ) {
+                                                                        console
+                                                                            .log(
+                                                                                "Extracted text:",
+                                                                                textContent
+                                                                                .text
+                                                                            ); // Only log the extracted text
+                                                                        console
+                                                                            .log(
+                                                                                "Response:4",
+                                                                                conversationalUrlNew
+                                                                            );
+                                                                        sendDataToResult
+                                                                            (
+                                                                                response
+                                                                                .name,
+                                                                                response
+                                                                                .email,
+                                                                                response
+                                                                                .file,
+                                                                                conversationalUrlNew,
+                                                                                textContent
+                                                                                .text
+                                                                            );
+
+                                                                    } else {
+                                                                        messageDiv
+                                                                            .html(
+                                                                                '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> No valid content received.</div>'
+                                                                            );
+                                                                    }
+                                                                } else {
+                                                                    messageDiv
+                                                                        .html(
+                                                                            '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> Invalid response format.</div>'
+                                                                        );
+                                                                }
+                                                            } catch (
+                                                            error) {
+                                                                console
+                                                                    .error(
+                                                                        "Error parsing response:",
+                                                                        error
+                                                                        );
+                                                                messageDiv
+                                                                    .html(
+                                                                        '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> Error processing response.</div>'
+                                                                    );
+                                                            }
+                                                        })
+                                                        .catch(error => {
+                                                            console.error(
+                                                                "Error fetching data:",
+                                                                error);
                                                             messageDiv.html(
-                                                                '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> No valid content received.</div>'
+                                                                '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> Error fetching data.</div>'
                                                             );
-                                                        }
-                                                    } else {
-                                                        messageDiv.html(
-                                                            '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> Invalid response format.</div>'
-                                                        );
-                                                    }
-                                                } catch (error) {
-                                                    console.error("Error parsing response:", error);
+                                                        });
+                                                } else {
                                                     messageDiv.html(
-                                                        '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> Error processing response.</div>'
+                                                        '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> ' +
+                                                        data.message +
+                                                        '</div>'
                                                     );
                                                 }
                                             })
                                             .catch(error => {
-                                                console.error("Error fetching data:", error);
+                                                console.error(
+                                                    "Error Fetching Tavus API:",
+                                                    error);
                                                 messageDiv.html(
-                                                    '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> Error fetching data.</div>'
+                                                    '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> Error processing request.</div>'
                                                 );
                                             });
                                     } else {
                                         messageDiv.html(
                                             '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> ' +
-                                            data.message + '</div>'
+                                            pdfResponse.error + '</div>'
                                         );
                                     }
-                                })
-                                .catch(error => {
-                                    console.error("Error Fetching Tavus API:", error);
+                                },
+                                error: function() {
                                     messageDiv.html(
-                                        '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> Error processing request.</div>'
+                                        '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> Error processing PDF.</div>'
                                     );
-                                });
+                                }
+                            });
                         } else {
                             messageDiv.html(
                                 '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle"></i> ' +

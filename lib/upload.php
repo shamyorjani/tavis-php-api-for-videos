@@ -7,7 +7,7 @@ $response = ["status" => "error", "message" => "Something went wrong!"];
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES["file"])) {
     $name = $_POST["name"] ?? "";
     $email = $_POST["email"] ?? "";
-    $target_dir = "pdf/";
+    $target_dir = "../pdf/";
 
     // Ensure the directory exists
     if (!file_exists($target_dir)) {

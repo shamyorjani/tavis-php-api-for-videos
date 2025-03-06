@@ -11,9 +11,11 @@ $dotenv->load();
 
 $api_key = $_ENV['ANTHROPIC_API_KEY'];
 
+$models = ['claude-3-7-sonnet-20250219', 'claude-3-7-sonnet-latest'];
+
 if (!$api_key) {
     echo json_encode(['success' => false, 'error' => 'API Key not found. Make sure the .env file is loaded correctly.']);
-    exit;
+    exit();
 }
 
 $api_endpoint = 'https://api.anthropic.com/v1/messages';
@@ -24,7 +26,7 @@ $file_name = $data['fileName'] ?? '';
 
 if (!$file_name) {
     echo json_encode(['success' => false, 'error' => 'File name not provided.']);
-    exit;
+    exit();
 }
 
 // Fetch the PDF file and encode it in base64
@@ -34,27 +36,30 @@ $pdf_base64 = base64_encode($pdf_content);
 
 if ($pdf_base64 === false) {
     echo json_encode(['success' => false, 'error' => 'Failed to read the PDF file.']);
-    exit;
+    exit();
 }
 
-$request_data = [
-    'model' => 'claude-3-7-sonnet-latest',
-    'max_tokens' => 8192,
-    'messages' => [
-        [
-            'role' => 'user',
-            'content' => [
-                [
-                    'type' => 'document',
-                    'source' => [
-                        'type' => 'base64',
-                        'media_type' => 'application/pdf',
-                        'data' => $pdf_base64,
+// Function to make API request
+function callClaudeAPI($model, $api_key, $api_endpoint, $pdf_base64)
+{
+    $request_data = [
+        'model' => 'claude-3-7-sonnet-20250219',
+        'max_tokens' => 8192,
+        'messages' => [
+            [
+                'role' => 'user',
+                'content' => [
+                    [
+                        'type' => 'document',
+                        'source' => [
+                            'type' => 'base64',
+                            'media_type' => 'application/pdf',
+                            'data' => $pdf_base64,
+                        ],
                     ],
-                ],
-                [
-                    'type' => 'text',
-                    'text' => "Extract all test names, values, and reference ranges from this lab report. For each test result, create a visualization in the following format:
+                    [
+                        'type' => 'text',
+                        'text' => "Extract all test names, values, and reference ranges from this lab report. For each test result, create a visualization in the following format:
 
 <div class='max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md'>
     <h2 class='text-xl font-bold mb-4'>[TEST NAME]</h2>
@@ -142,39 +147,52 @@ Please follow these specific rules for visualization:
             22. If all test results are within the reference range and there are no out-of-range values, do not create any graphs. Instead, append a message like 'All test results are within the reference range No further action is required.' to the HTML using Tailwind CSS for styling. do say that i am using tailwind css html etc.
             23. Since this lab report includes more than five tests and contains multiple out-of-range values, I will ensure that all abnormal results are displayed without exception.
             24. make a graph of every out off range and or red value in the report. MOST IMPORTANI",
-                ]
+                    ],
+                ],
             ],
         ],
-    ],
-];
+    ];
 
-// Convert the request data to JSON
-$request_json = json_encode($request_data);
+    // Convert the request data to JSON
+    $request_json = json_encode($request_data);
 
-// Initialize cURL
-$ch = curl_init($api_endpoint);
+    // Initialize cURL
+    $ch = curl_init($api_endpoint);
 
-// Set cURL options
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Content-Type: application/json',
-    'x-api-key: ' . $api_key,
-    'anthropic-version: 2023-06-01'
-]);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $request_json);
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'x-api-key: ' . $api_key, 'anthropic-version: 2023-06-01']);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $request_json);
 
-// Execute the cURL request and get the response
-$response = curl_exec($ch);
+    // Execute the cURL request and get the response
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-// Check for cURL errors
-if (curl_errno($ch)) {
-    echo 'cURL error: ' . curl_error($ch);
-} else {
-    // Print the response
-    echo 'API response: ' . $response;
+    // Close cURL session
+    curl_close($ch);
+
+    return [$response, $http_code];
 }
 
-// Close the cURL session
-curl_close($ch);
+// Try both models
+foreach ($models as $model) {
+    [$response, $http_code] = callClaudeAPI($model, $api_key, $api_endpoint, $pdf_base64);
+
+    // Decode response
+    $decoded_response = json_decode($response, true);
+
+    // If the API is overloaded, try the next model
+    if (isset($decoded_response['error']['type']) && $decoded_response['error']['type'] === 'overloaded_error') {
+        continue;
+    }
+
+    // If the response is valid, return it
+    echo 'API response: ' . $response;
+    exit();
+}
+
+// If all models fail, return an error
+echo json_encode(['success' => false, 'error' => 'All models are overloaded. Please try again later.']);
+exit();
 ?>

@@ -1,5 +1,5 @@
 <?php
-
+header('Content-Type: application/json');
 // Start the session to access the stored API key
 if (!isset($_SESSION)) {
     session_start();
@@ -53,10 +53,6 @@ fclose($verbose);
 if ($err) {
     echo json_encode(['error' => 'cURL Error #:' . $err]);
 } else {
-    echo 'HTTP Status Code: ' . $http_code . "\n";
-    echo 'Response from API: ' . $response . "\n";
-    echo "Verbose information:\n" . $verbose_log . "\n";
-
     if ($http_code == 200) {
         echo json_encode(['message' => 'Conversation ended successfully.']);
     } else {
