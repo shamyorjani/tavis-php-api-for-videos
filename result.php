@@ -143,9 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <!-- Main Content -->
-        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+        <div class="max-w-7xl mx-auto flex flex-col gap-8">
             <!-- Video Call Section -->
-            <div class="lg:w-1/2 flex flex-col">
+            <div class="lg:w-100 flex flex-col">
                 <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 mb-4">
                     <div class="bg-gradient-to-r from-medical-600 to-medical-500 px-6 py-4">
                         <h2 class="text-xl font-semibold text-white flex items-center">
@@ -184,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
 
-                    <div class="mt-4 text-sm text-gray-500 bg-medical-50 rounded-lg p-3">
+                    <div class="mt-4 text-sm text-gray-500 bg-medical-50 rounded-lg p-3 mx-4 mb-4">
                         <p class="flex items-start">
                             <i class="fas fa-info-circle text-medical-600 mt-1 mr-2"></i>
                             <span>Speak with a healthcare professional about your lab results and get personalized
@@ -194,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
              <!-- Results Section -->
-        <div class="lg:w-1/2">
+        <div class="lg:w-100">
             <div class="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
                 <div class="bg-gradient-to-r from-medical-600 to-medical-500 px-6 py-4">
                     <h2 class="text-xl font-semibold text-white flex items-center">
@@ -339,7 +339,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 });
 
                 const messageEl = document.getElementById("massage-conversation");
-                messageEl.innerText = "Consultation active - Speak with your healthcare professional";
+                messageEl.innerText = "Meet Sanjay, your health concierge. He will describe your out-of-range values to you. Additionally, you can ask him questions such as, ‘Why is it important to monitor certain health metrics?’ or ‘What does an elevated value mean for my health?’";
                 messageEl.className =
                     "text-center text-green-600 mb-4 py-2 px-4 rounded-lg bg-green-50 border border-green-200";
             } else {
