@@ -203,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </h2>
                 </div>
 
-                <div class="p-2 md:px-6 overflow-y-auto max-h-[70vh]">
+                <div class="p-2 md:px-6 overflow-y-auto max-h-100">
                     <div id="results-container" class="space-y-8">
                         <div class="flex items-center justify-center py-12">
                             <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-medical-600">
