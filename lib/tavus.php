@@ -33,8 +33,8 @@ $requestData = [
     'persona_id' => 'p2fbd605',
     'callback_url' => 'https://e8f9-182-184-138-168.ngrok-free.app/lib/tavus_wh.php',
     'conversation_name' => 'A Meeting with ' . $name,
-    'conversational_context' => 'You are about to talk to ' . $name . '. this my reports you will explain this => ' . $textContent . ' Please be respectful and professional do not tak about html and tailwind code just talk about report details.',
-    'custom_greeting' => 'Hi ' . $name . ', my name is Sanjay and I am your health concierge. I am not a doctor and I am not here to diagnose you, rather I will give you information about your lab results and provide you an opportunity to ask questions so that you can be more informed about your health. After our conversation, you can also schedule a call with a doctor via the link below. so lets get started. so what questions do u want to ask about your lab reports results .',
+    'conversational_context' => 'You are about to talk to ' . $name . '. This is my report, you will explain this => ' . $textContent . ' Please be respectful and professional. Do not talk about HTML and Tailwind code, just talk about report details. If the person asks, "Would you like me to review your lab results that are out of range?", and if they say yes, then go through the description of the out of range values from reports. do not asked about name and date of birth, just talk about the report.',
+    'custom_greeting' => 'Hi ' . $name . ', my name is Sanjay and I am your health concierge. I am not a doctor and I am not here to diagnose you. Rather, I will give you information about your lab results and provide you an opportunity to ask questions so that you can be more informed about your health. After our conversation, you can also schedule a call with a doctor via the link below. Would you like me to review your lab results that are out of range?',
     'properties' => [
         'max_call_duration' => 3600,
         'participant_left_timeout' => 60,
